@@ -32,11 +32,12 @@ app.use(
 app.use(cookieParser());
 // importing routes
 import userRouter from "./src/routes/user.route.js";
+import fileRouter from "./src/routes/file.route.js";
 
 // implementing routes
 app.use("/api/v1/users", userRouter);
-
-app.get("/healthcheck", (_, res) => {
+app.use("/api/v1/files",fileRouter)
+app.get("/api/v1/healthcheck", (_, res) => {
   return res.send("Server is running fine");
 });
 

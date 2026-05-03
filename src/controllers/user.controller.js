@@ -129,7 +129,7 @@ const deleteUser = asyncHandler(async (req, res, _) => {
 const refreshAccessToken = asyncHandler(async (req, res, _) => {
   const incommingRefreshToken = req.cookies?.refreshToken || body.refreshToken;
   if (!incommingRefreshToken) {
-    throw new ApiError(401, "Unautorized request");
+    throw new ApiError(401, "Unauthorized request");
   }
   try {
     const decodedToken = JWT.verify(
@@ -138,14 +138,17 @@ const refreshAccessToken = asyncHandler(async (req, res, _) => {
     );
     const user = await User.findById(decodedToken?._id);
     if (!user && user.refreshToken !== incommingRefreshToken) {
-      throw new ApiError(401, "Unautorized request");
+      throw new ApiError(401, "Unauthorized request");
     }
-    const { accessToken, refreshToken } = generateAccessAndRefreshTokens(user);
-
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user);
+    
+    console.log("accessToken", accessToken);
+    console.log("refreshToken", refreshToken);
     const options = {
       httpOnly: true,
       secure: true,
     };
+
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -153,7 +156,7 @@ const refreshAccessToken = asyncHandler(async (req, res, _) => {
       .json(
         new ApiResponse(
           200,
-          { accessToken, refreshToken },
+          {  accessToken,  refreshToken },
           "User session refreshed successfully",
         ),
       );
@@ -163,7 +166,7 @@ const refreshAccessToken = asyncHandler(async (req, res, _) => {
 });
 const getCurrentUser = asyncHandler(async (req, res, _) => {
   const userId = req.user._id;
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).select("-refreshToken").lean();
   if (!user) {
     throw new ApiError(401, "User not found");
   }
