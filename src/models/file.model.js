@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const fileSchema = new Schema(
   {
@@ -9,6 +9,10 @@ const fileSchema = new Schema(
     filename: {
       type: String,
       required: true,
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {
