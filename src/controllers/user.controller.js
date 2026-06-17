@@ -63,7 +63,8 @@ const loginUser = asyncHandler(async (req, res, _) => {
   }
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
   return res
     .status(200)
@@ -94,7 +95,8 @@ const logoutUser = asyncHandler(async (req, res, _) => {
   }
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
   return res
     .status(200)
@@ -118,7 +120,8 @@ const deleteUser = asyncHandler(async (req, res, _) => {
   }
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
   return res
     .status(200)
@@ -140,13 +143,13 @@ const refreshAccessToken = asyncHandler(async (req, res, _) => {
     if (!user && user.refreshToken !== incommingRefreshToken) {
       throw new ApiError(401, "Unauthorized request");
     }
-    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user);
-    
-    console.log("accessToken", accessToken);
-    console.log("refreshToken", refreshToken);
+    const { accessToken, refreshToken } =
+      await generateAccessAndRefreshTokens(user);
+
     const options = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     };
 
     return res
@@ -156,7 +159,7 @@ const refreshAccessToken = asyncHandler(async (req, res, _) => {
       .json(
         new ApiResponse(
           200,
-          {  accessToken,  refreshToken },
+          { accessToken, refreshToken },
           "User session refreshed successfully",
         ),
       );
