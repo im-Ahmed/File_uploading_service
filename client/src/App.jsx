@@ -11,9 +11,8 @@ import { useAuth } from "./hooks/useAuth";
 import { useFiles } from "./hooks/useFiles";
 import { getFileType } from "./components/PinCard";
 
-
-
 export default function App() {
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [serverReady, setServerReady] = useState(() =>
     Boolean(localStorage.getItem("fp_server")),
   );
@@ -73,6 +72,8 @@ export default function App() {
     );
   }, [selectedFile, handleFileDelete, filesHook.getById]);
 
+  const closeMobileSidebar = () => setMobileSidebarOpen(false);
+
   if (!serverReady) {
     return <ServerSetup onSave={() => setServerReady(true)} />;
   }
@@ -84,11 +85,12 @@ export default function App() {
         isLoggedIn={auth.isLoggedIn}
         onLogout={handleLogout}
         onSearch={setSearchQuery}
+        onToggleSidebar={() => setMobileSidebarOpen((v) => !v)}
       />
 
       <div className="max-w-screen-xl mx-auto px-6 py-6 flex gap-6">
         {/* ── Sidebar ── */}
-        <aside className="w-72 shrink-0 flex flex-col gap-3 md:flex">
+        <aside className="hidden md:flex w-72 shrink-0 flex-col gap-3">
           {/* Server config badge */}
           <div className="flex items-center justify-between bg-canvas rounded-md px-4 py-2.5">
             <span className="text-xs text-mute truncate">
@@ -127,6 +129,40 @@ export default function App() {
             </div>
           )}
         </aside>
+
+        {/* Mobile sidebar (slide-over) */}
+        {mobileSidebarOpen && (
+          <div
+            className="fixed inset-0 z-50 bg-black/40 md:hidden flex"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) closeMobileSidebar();
+            }}
+          >
+            <div className="w-72 bg-canvas p-4">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-bold">FilePin</span>
+                <button
+                  onClick={closeMobileSidebar}
+                  className="text-sm font-bold p-2"
+                >
+                  Close
+                </button>
+              </div>
+              {auth.isLoggedIn ? (
+                <UploadCard onUpload={filesHook.upload} />
+              ) : (
+                <div className="bg-canvas rounded-md p-5">
+                  <AuthForm
+                    onLogin={auth.doLogin}
+                    onRegister={auth.doRegister}
+                    loading={auth.loading}
+                    error={auth.error}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* ── Main feed ── */}
         <main className="flex-1 min-w-0">
