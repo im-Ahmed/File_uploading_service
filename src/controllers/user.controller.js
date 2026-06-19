@@ -130,7 +130,8 @@ const deleteUser = asyncHandler(async (req, res, _) => {
     .json(new ApiResponse(200, {}, "User deleted Successfully"));
 });
 const refreshAccessToken = asyncHandler(async (req, res, _) => {
-  const incommingRefreshToken = req.cookies?.refreshToken || body.refreshToken;
+  const incommingRefreshToken =
+    req.cookies?.refreshToken || req.body?.refreshToken;
   if (!incommingRefreshToken) {
     throw new ApiError(401, "Unauthorized request");
   }

@@ -25,7 +25,7 @@ app.use(
 // defining origins
 app.use(
   cors({
-    origin: "http://localhost:5500",
+    origin: origin,
     credentials: true, // cookies, headers, tokens support
   }),
 );

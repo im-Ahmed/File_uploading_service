@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fbfbf9;
+    color: #33332e;
+  }
+}
+
+@layer components {
+  .pin-grid {
+    columns: 4;
+    column-gap: 8px;
+  }
+
+  @media (max-width: 1024px) {
+    .pin-grid { columns: 3; }
+  }
+  @media (max-width: 768px) {
+    .pin-grid { columns: 2; }
+  }
+  @media (max-width: 480px) {
+    .pin-grid { columns: 1; }
+  }
+
+  .pin-card-item {
+    break-inside: avoid;
+    margin-bottom: 8px;
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #435ee5;
+  }
+
+  .input-focus:focus {
+    border-color: #000;
+    border-width: 2px;
+    box-shadow: 0 0 0 4px #435ee5;
+    outline: none;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #f6f6f3 25%, #e5e5e0 50%, #f6f6f3 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+}
